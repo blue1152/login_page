@@ -1,6 +1,7 @@
 const express = require("express");
 const exphbs = require("express-handlebars");
 const bodyParser = require("body-parser");
+const loginPattern = require("./main");
 const cookieParser = require("cookie-parser");
 const app = express();
 const port = 3000;
@@ -16,8 +17,19 @@ app.get("/", (req, res) => {
 });
 
 app.post("/", (req, res) => {
-  console.log("req.body", req.body);
-  res.render("index");
+  const options = req.body;
+  const loginUser = loginPattern(options);
+  const none = "登入失敗! 請重新輸入帳號/密碼";
+  res.render("login", {
+    loginUser: loginUser,
+    helpers: {
+      check_up: function() {
+        if (loginUser == false) {
+          return none;
+        }
+      }
+    }
+  });
 });
 
 app.listen(port, () => {
